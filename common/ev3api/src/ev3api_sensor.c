@@ -42,6 +42,14 @@ int16_t analog_sensor_get_pin6(sensor_port_t port) {
 	return pAnalogSensorData[port].pin6[*pAnalogSensorData[port].actual];
 }
 
+/*
+ * Check if a UART sensor has data ready to be read.
+ */
+static inline
+bool_t uart_sensor_data_ready(sensor_port_t port) {
+	return ((*pUartSensorData[port].status) & UART_DATA_READY) ? true : false;
+}
+
 /**
  * Fetch data from a UART sensor. If size is 0, switch mode only.
  */
@@ -54,7 +62,12 @@ void uart_sensor_fetch_data(sensor_port_t port, uint8_t mode, void *dest, SIZE s
 	ercd = uart_sensor_config(port, mode);
 	assert(ercd == E_OK);
 //	while(!uart_sensor_data_ready(port));
-	while(!((*pUartSensorData[port].status) & UART_DATA_READY)); // TODO: time out
+
+	// TODO: decide number of attempts, or timeout
+	int attempts = 10;
+	while(attempts > 0 && !((*pUartSensorData[port].status) & UART_DATA_READY)) {
+		attempts--;
+	}
 
 	// Copy data
 	if (size > 0) {
@@ -113,7 +126,15 @@ ER ev3_sensor_config(sensor_port_t port, sensor_type_t type) {
     case INFRARED_SENSOR:
         // Configure UART sensor
     	ercd = uart_sensor_config(port, 0);
-    	assert(ercd == E_OK);
+        assert(ercd == E_OK);
+
+        /* Busy wait 5ms wait for the sensor to finish initializing */
+        SYSTIM start, now;
+        get_tim(&start);
+        do { get_tim(&now); } while ((now - start < 5) && !uart_sensor_data_ready(port));
+        if (!uart_sensor_data_ready(port)) {
+            return E_OBJ;
+        }
         // Wait UART sensor to finish initialization
 //    	while(!uart_sensor_data_ready(port));
 		break;
