@@ -86,6 +86,7 @@ void connect_sensor(intptr_t unused) {
 		        { .key = '1', .title = "HT Acc. sensor", .exinf = HT_NXT_ACCEL_SENSOR },
 		        { .key = '3', .title = "HT Color sensor", .exinf = HT_NXT_COLOR_SENSOR },
 		        { .key = '2', .title = "NXT Temp. sensor", .exinf = NXT_TEMP_SENSOR },
+				{ .key = '4', .title = "NXT US sensor", .exinf = NXT_ULTRASONIC_SENSOR },
 		        { .key = 'Q', .title = "Cancel", .exinf = -1 },
 	        };
 
@@ -635,6 +636,28 @@ void test_nxt_temp_sensor(sensor_port_t port) {
 	});
 }
 
+static 
+void test_nxt_ultrasonic_sensor(sensor_port_t port) {
+	// Draw title
+	char msgbuf[100];
+	ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT, EV3_LCD_WHITE); // Clear menu area
+	ev3_lcd_draw_string("Test Sensor", (EV3_LCD_WIDTH - strlen("Test Sensor") * MENU_FONT_WIDTH) / 2, 0);
+	sprintf(msgbuf, "Type: NXT Distance");
+	ev3_lcd_draw_string(msgbuf, 0, MENU_FONT_HEIGHT * 1);
+	sprintf(msgbuf, "Port: %c", '1' + port);
+	ev3_lcd_draw_string(msgbuf, 0, MENU_FONT_HEIGHT * 2);
+
+    int16_t distance;
+
+	VIEW_SENSOR({
+		bool_t val = nxt_ultrasonic_sensor_get_distance(port, &distance);
+		assert(val);
+		sprintf(msgbuf, "Distance.: %-4d", distance);
+		ev3_lcd_draw_string(msgbuf, 0, MENU_FONT_HEIGHT * 3);
+		tslp_tsk(10);
+	});
+}
+
 void test_sensor(intptr_t unused) {
 	const CliMenuEntry* cme_port = NULL;
 	while(cme_port == NULL) {
@@ -669,6 +692,9 @@ void test_sensor(intptr_t unused) {
 		break;
 	case NXT_TEMP_SENSOR:
 		test_nxt_temp_sensor(cme_port->exinf);
+		break;
+	case NXT_ULTRASONIC_SENSOR:
+		test_nxt_ultrasonic_sensor(cme_port->exinf);
 		break;
 	case NONE_SENSOR: {
 		char msgbuf[100];
