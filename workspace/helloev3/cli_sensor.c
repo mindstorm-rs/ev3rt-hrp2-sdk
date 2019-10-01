@@ -654,7 +654,7 @@ void test_nxt_ultrasonic_sensor(sensor_port_t port) {
 		assert(val);
 		sprintf(msgbuf, "Distance.: %-4d", distance);
 		ev3_lcd_draw_string(msgbuf, 0, MENU_FONT_HEIGHT * 3);
-		tslp_tsk(10);
+		tslp_tsk(22);
 	});
 }
 
