@@ -4,16 +4,28 @@
  * This is a program used to test the whole platform.
  */
 
+#include <ctype.h>
 #include "ev3api.h"
 #include "app.h"
 
 void main_task(intptr_t unused) {
-	ev3_led_set_color(LED_RED);
-	tslp_tsk(1000U);
-	ev3_led_set_color(LED_ORANGE);
-	tslp_tsk(1000U);
-	ev3_led_set_color(LED_GREEN);
-	tslp_tsk(1000U);
-	ev3_led_set_color(LED_OFF);
-	tslp_tsk(1000U);
+	ledcolor_t colors[4] = {LED_RED, LED_ORANGE, LED_GREEN, LED_OFF};
+	int color = 0;
+
+	for(;;) {
+		ev3_led_set_color(colors[color]);
+
+		schedule_bluetooth_agent_task();
+		char received = bluetooth_agent_get_last_char();
+
+		char to_write = '0' + color;
+		if (received != 0) {
+			to_write = received;
+		}
+		bluetooth_agent_schedule_write((uint8_t*) &to_write, 1);
+
+		color += 1;
+		color %= 4;
+		tslp_tsk(500U);
+	}
 }
