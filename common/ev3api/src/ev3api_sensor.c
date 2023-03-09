@@ -545,6 +545,8 @@ error_exit:
 	return false;
 }
 
+static uint8_t nxt_us_distances[4];
+
 bool_t nxt_ultrasonic_sensor_get_distance(sensor_port_t port, int16_t *distance) {
 	ER ercd;
 
@@ -552,10 +554,15 @@ bool_t nxt_ultrasonic_sensor_get_distance(sensor_port_t port, int16_t *distance)
 	CHECK_COND(ev3_sensor_get_type(port) == NXT_ULTRASONIC_SENSOR, E_OBJ);
 	CHECK_COND(*pI2CSensorData[port].status == I2C_TRANS_IDLE, E_OBJ);
 
-    *distance = pI2CSensorData[port].raw[0];
-
-	ercd = start_i2c_transaction(port, 0x1, "\x42", 1, 1);
+	uint8_t d = pI2CSensorData[port].raw[0];
+	*distance = d;
+	if (d != nxt_us_distances[port]) {
+		ercd = start_i2c_transaction(port, 0x1, "\x42", 1, 1);
+	} else {
+		ercd = start_i2c_transaction(port, 0x4, "\x42", 1, 1);
+	}
 	assert(ercd == E_OK);
+	nxt_us_distances[port] = d;
 
 	return true;
 
