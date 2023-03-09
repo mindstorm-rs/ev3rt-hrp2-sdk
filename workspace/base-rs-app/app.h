@@ -84,9 +84,9 @@
 extern void	main_task(intptr_t exinf);
 extern void	bluetooth_agent_task(intptr_t exinf);
 
-extern void bluetooth_agent_set_period_ms(uint32_t ms);
-extern void bluetooth_agent_schedule_write(uint8_t* buf, size_t size);
-extern char bluetooth_agent_get_last_char();
-extern bool_t schedule_bluetooth_agent_task();
+extern void ev3_bluetooth_agent_set_period_ms(uint32_t ms);
+extern void ev3_bluetooth_agent_schedule_write(uint8_t* buf, size_t size);
+extern char ev3_bluetooth_agent_get_last_char();
+extern bool_t ev3_schedule_bluetooth_agent_task();
 
 #endif /* TOPPERS_MACRO_ONLY */

@@ -10,14 +10,14 @@ static size_t write_buffer_length = 0;
 
 static uint32_t bluetooth_task_period_ms = 50;
 
-void bluetooth_agent_set_period_ms(uint32_t ms) {
+void ev3_bluetooth_agent_set_period_ms(uint32_t ms) {
     bluetooth_task_period_ms = ms;
 }
 
 static uint32_t bluetooth_agent_write_done = 0;
 static uint32_t bluetooth_agent_write_todo = 0;
 
-void bluetooth_agent_schedule_write(uint8_t* buf, size_t size) {
+void ev3_bluetooth_agent_schedule_write(uint8_t* buf, size_t size) {
     if (size > BLUETOOTH_BUF_SIZE) {
         size = BLUETOOTH_BUF_SIZE;
     }
@@ -33,7 +33,7 @@ void bluetooth_agent_schedule_write(uint8_t* buf, size_t size) {
 static bool_t bluetooth_agent_received_pending = false;
 static char bluetooth_agent_received_char = '\0';
 
-char bluetooth_agent_get_last_char() {
+char ev3_bluetooth_agent_get_last_char() {
     if (bluetooth_agent_received_pending) {
         bluetooth_agent_received_pending = false;
         return bluetooth_agent_received_char;
@@ -62,7 +62,7 @@ void bluetooth_agent_task(intptr_t unused) {
     }
 }
 
-bool_t schedule_bluetooth_agent_task() {
+bool_t ev3_schedule_bluetooth_agent_task() {
     bool_t connected = ev3_bluetooth_is_connected();
     if (connected) {
         if (!bluetooth_agent_task_active) {
