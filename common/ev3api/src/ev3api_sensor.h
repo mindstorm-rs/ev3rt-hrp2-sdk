@@ -431,6 +431,11 @@ bool_t nxt_temp_sensor_measure(sensor_port_t port, float *temp);
  */
 bool_t nxt_ultrasonic_sensor_get_distance(sensor_port_t port, int16_t *distance);
 
+int16_t nxt_ultrasonic_sensor_get_last_reading(sensor_port_t port);
+bool_t nxt_ultrasonic_sensor_did_reset(sensor_port_t port);
+bool_t nxt_ultrasonic_sensor_request_read(sensor_port_t port);
+bool_t nxt_ultrasonic_sensor_request_reset(sensor_port_t port);
+
 /**
  * @} // End of group
  */

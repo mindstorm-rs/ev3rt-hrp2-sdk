@@ -545,7 +545,68 @@ error_exit:
 	return false;
 }
 
+static uint8_t nxt_us_did_reset[4];
 static uint8_t nxt_us_distances[4];
+
+int16_t nxt_ultrasonic_sensor_get_last_reading(sensor_port_t port) {
+	if (port < 0 || port > 3 || ev3_sensor_get_type(port) != NXT_ULTRASONIC_SENSOR) {
+		return 0;
+	}
+	return nxt_us_distances[port];
+}
+
+bool_t nxt_ultrasonic_sensor_did_reset(sensor_port_t port) {
+	if (port < 0 || port > 3 || ev3_sensor_get_type(port) != NXT_ULTRASONIC_SENSOR) {
+		return 0;
+	}
+	return nxt_us_did_reset[port] != 0;
+}
+
+bool_t nxt_ultrasonic_sensor_request_read(sensor_port_t port) {
+	ER ercd;
+
+	CHECK_PORT(port);
+	CHECK_COND(ev3_sensor_get_type(port) == NXT_ULTRASONIC_SENSOR, E_OBJ);
+	CHECK_COND(*pI2CSensorData[port].status == I2C_TRANS_IDLE, E_OBJ);
+
+	bool_t did_reset = (nxt_us_did_reset[port] != 0);
+	if (!did_reset) {
+		nxt_us_distances[port] = pI2CSensorData[port].raw[0];
+	}
+
+	nxt_us_did_reset[port] = 0;
+	ercd = start_i2c_transaction(port, 0x1, "\x42", 1, 1);
+	assert(ercd == E_OK);
+
+	return true;
+
+error_exit:
+	syslog(LOG_WARNING, "%s(): ercd %d", __FUNCTION__, ercd);
+	return false;
+}
+
+bool_t nxt_ultrasonic_sensor_request_reset(sensor_port_t port) {
+	ER ercd;
+
+	CHECK_PORT(port);
+	CHECK_COND(ev3_sensor_get_type(port) == NXT_ULTRASONIC_SENSOR, E_OBJ);
+	CHECK_COND(*pI2CSensorData[port].status == I2C_TRANS_IDLE, E_OBJ);
+
+	bool_t did_reset = (nxt_us_did_reset[port] != 0);
+	if (!did_reset) {
+		nxt_us_distances[port] = pI2CSensorData[port].raw[0];
+	}
+
+	nxt_us_did_reset[port] = 1;
+	ercd = start_i2c_transaction(port, 0x4, "\x42", 1, 1);
+	assert(ercd == E_OK);
+
+	return true;
+
+error_exit:
+	syslog(LOG_WARNING, "%s(): ercd %d", __FUNCTION__, ercd);
+	return false;
+}
 
 bool_t nxt_ultrasonic_sensor_get_distance(sensor_port_t port, int16_t *distance) {
 	ER ercd;
@@ -554,15 +615,26 @@ bool_t nxt_ultrasonic_sensor_get_distance(sensor_port_t port, int16_t *distance)
 	CHECK_COND(ev3_sensor_get_type(port) == NXT_ULTRASONIC_SENSOR, E_OBJ);
 	CHECK_COND(*pI2CSensorData[port].status == I2C_TRANS_IDLE, E_OBJ);
 
-	uint8_t d = pI2CSensorData[port].raw[0];
-	*distance = d;
-	if (d != nxt_us_distances[port]) {
+	uint8_t current_d = pI2CSensorData[port].raw[0];
+	uint8_t previous_d = nxt_us_distances[port];
+	bool_t is_different = (current_d != previous_d);
+	bool_t did_reset = (nxt_us_did_reset[port] != 0);
+
+	if (!did_reset) {
+		*distance = current_d;
+		nxt_us_distances[port] = current_d;
+	} else {
+		*distance = previous_d;
+	}
+
+	if (did_reset || !is_different) {
+		nxt_us_did_reset[port] = 0;
 		ercd = start_i2c_transaction(port, 0x1, "\x42", 1, 1);
 	} else {
+		nxt_us_did_reset[port] = 1;
 		ercd = start_i2c_transaction(port, 0x4, "\x42", 1, 1);
 	}
 	assert(ercd == E_OK);
-	nxt_us_distances[port] = d;
 
 	return true;
 
