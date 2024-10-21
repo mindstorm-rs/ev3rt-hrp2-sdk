@@ -111,6 +111,10 @@ error_exit:
 	return ercd;
 }
 
+void* ev3_lcd_pixels() {
+	return lcd_screen->pixels;
+}
+
 ER ev3_lcd_draw_line(int32_t x0, int32_t y0, int32_t x1, int32_t y1) {
 	// TODO: refactor this
 #define SOLID (0)

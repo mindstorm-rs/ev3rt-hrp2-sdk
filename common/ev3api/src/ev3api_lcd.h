@@ -223,6 +223,13 @@ ER ev3_lcd_fill_rect(int32_t x, int32_t y, int32_t w, int32_t h, lcdcolor_t colo
 ER ev3_lcd_draw_image(const image_t *p_image, int32_t x, int32_t y);
 
 /**
+ * \~English
+ * \brief            Returns the pointer to the LCD framebuffer.
+ * \retval           LCD framebuffer address.
+ */
+void* ev3_lcd_pixels();
+
+/**
  * @} // End of group ev3api-lcd
  */
  
