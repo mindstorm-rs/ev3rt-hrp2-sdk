@@ -345,6 +345,24 @@ bool_t ev3_touch_sensor_is_pressed(sensor_port_t port);
 
 /**
  * \~English
+ * \brief 	     Get the analog reading of a touch sensor from pin 1 (should work with NXT light sensors).
+ * \details      When an invalid sensor support number is specified, always returns -1 (error log is output)
+ * \param port   Sensor port to be inquired
+ * \return       Analog sensor reading (0..4095)
+ */
+int16_t ev3_touch_sensor_analog_read_pin1(sensor_port_t port);
+
+/**
+ * \~English
+ * \brief 	     Get the analog reading of a touch sensor from pin 6.
+ * \details      When an invalid sensor support number is specified, always returns -1 (error log is output)
+ * \param port   Sensor port to be inquired
+ * \return       Analog sensor reading (0..4095)
+ */
+int16_t ev3_touch_sensor_analog_read_pin6(sensor_port_t port);
+
+/**
+ * \~English
  * \brief 	     Measure acceleration with a HiTechnic NXT acceleration sensor.
  * \details      When an invalid sensor support number is specified, always returns false (error log is output)
  * \param port   Sensor port to be inquired

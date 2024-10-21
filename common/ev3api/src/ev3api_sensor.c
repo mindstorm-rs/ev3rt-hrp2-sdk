@@ -461,6 +461,34 @@ error_exit:
     return false;
 }
 
+int16_t ev3_touch_sensor_analog_read_pin1(sensor_port_t port) {
+	ER ercd;
+
+//	lazy_initialize();
+	CHECK_PORT(port);
+	CHECK_COND(ev3_sensor_get_type(port) == TOUCH_SENSOR, E_OBJ);
+
+	return analog_sensor_get_pin1(port);
+
+error_exit:
+    syslog(LOG_WARNING, "%s(): ercd %d", __FUNCTION__, ercd);
+    return -1;
+}
+
+int16_t ev3_touch_sensor_analog_read_pin6(sensor_port_t port) {
+	ER ercd;
+
+//	lazy_initialize();
+	CHECK_PORT(port);
+	CHECK_COND(ev3_sensor_get_type(port) == TOUCH_SENSOR, E_OBJ);
+
+	return analog_sensor_get_pin6(port);
+
+error_exit:
+    syslog(LOG_WARNING, "%s(): ercd %d", __FUNCTION__, ercd);
+    return -1;
+}
+
 bool_t ht_nxt_accel_sensor_measure(sensor_port_t port, int16_t axes[3]) {
 	ER ercd;
 
