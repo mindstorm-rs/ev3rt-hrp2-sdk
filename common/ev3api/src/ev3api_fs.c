@@ -78,6 +78,53 @@ error_exit:
 	return ercd;
 }
 
+ER ev3_file_write(const char *path, char *data, size_t size) {
+	ER ercd;
+
+	FILE      *fin;
+	fin = NULL;
+
+	CHECK_COND(path != NULL, E_PAR);
+	CHECK_COND(data != NULL, E_NOMEM);
+
+	/**
+	 * Open file
+	 */
+	fin = fopen(path, "wb");
+	if (fin == NULL) {
+		API_WARN("Path '%s' is invalid.", path);
+		CHECK_COND(false, E_PAR);
+	}
+
+	/**
+	 * Perform writing
+	 */
+	uint8_t *bufptr = data;
+	while (1) {
+		size_t bytesleft = ((uint8_t*)data) + size - bufptr;
+		if (bytesleft > 512) bytesleft = 512; // TODO: Check if this is really needed
+		size_t bytes_processed = fwrite(bufptr, 1, bytesleft, fin);
+		if (bytes_processed > 0) {
+			bufptr += bytes_processed;
+		} else {
+			break;
+		}
+	}
+	if (ferror(fin)) {
+		API_WARN("I/O failure when writing.");
+		CHECK_COND(false, E_PAR);
+	}
+	assert(bufptr == data + size);
+
+	ercd = E_OK;
+	/* Fall through */
+
+error_exit:
+	if (fin != NULL) fclose(fin);
+
+	return ercd;
+}
+
 ER ev3_memfile_free(memfile_t *p_memfile) {
 	ER ercd;
 

@@ -153,6 +153,21 @@ ER ev3_memfile_load(const char *path, memfile_t *p_memfile);
 
 /**
  * \~English
+ * \brief            Create a memory file and load a specific file into it from the SD card.
+ * \details          Generates an object of the memory file and reads the specified file from the SD card into this memory file. If an error occurs , clear buffer in \a p_memfile to \a NULL.
+ * \param  path      Path of the file to be loaded
+ * \param  data      Pointer to data that must be written
+ * \param  size      Size of data that must be written
+ * \retval E_OK      Success
+ * \retval E_MACV    Memory access violation (path or p_memfile)
+ * \retval E_NOMEM   The \a data pointer is NULL.
+ * \retval E_PAR     The \a path does not point to a valid file.
+ * \retval E_SYS     I/O failure, which might be caused by a corrupted SD card.
+ */
+ER ev3_file_write(const char *path, char *data, size_t size);
+
+/**
+ * \~English
  * \brief            Free the resource (memory) allocated to a memory file. 
   * \details         The \a buffer of \a p_memfile will be set to NULL on success.
  * \param  p_memfile Pointer of a memory file to release
