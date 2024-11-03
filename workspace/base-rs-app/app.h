@@ -79,14 +79,15 @@
  * Tasks
  */
 
-#define BLUETOOTH_BUF_SIZE 64
-
 extern void	main_task(intptr_t exinf);
 extern void	bluetooth_agent_task(intptr_t exinf);
 
 extern void ev3_bluetooth_agent_set_period_ms(uint32_t ms);
-extern void ev3_bluetooth_agent_schedule_write(uint8_t* buf, size_t size);
-extern char ev3_bluetooth_agent_get_last_char();
+extern void ev3_bluetooth_agent_set_master(bool_t is_master);
+extern bool_t ev3_check_bluetooth_is_connected();
 extern bool_t ev3_schedule_bluetooth_agent_task();
+extern bool_t ev3_bt_write_value(uint32_t value);
+extern uint32_t *ev3_bluetooth_agent_values_read_ptr();
+extern uint32_t *ev3_bluetooth_agent_value_read_ptr();
 
 #endif /* TOPPERS_MACRO_ONLY */

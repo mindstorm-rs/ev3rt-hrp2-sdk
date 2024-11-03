@@ -16,13 +16,7 @@ void main_task(intptr_t unused) {
 		ev3_led_set_color(colors[color]);
 
 		ev3_schedule_bluetooth_agent_task();
-		char received = ev3_bluetooth_agent_get_last_char();
-
-		char to_write = '0' + color;
-		if (received != 0) {
-			to_write = received;
-		}
-		ev3_bluetooth_agent_schedule_write((uint8_t*) &to_write, 1);
+		ev3_bt_write_value(0x12345678);
 
 		color += 1;
 		color %= 4;

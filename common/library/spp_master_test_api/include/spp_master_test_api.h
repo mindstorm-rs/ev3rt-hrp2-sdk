@@ -1,5 +1,5 @@
 #pragma once
 
-extern bool_t spp_master_test_is_connected();
-extern void   spp_master_test_connect_ev3(uint8_t addr[6], const char *pin);
-extern FILE*  spp_master_test_open_file();
+extern bool_t ev3_spp_master_test_is_connected();
+extern ER   spp_master_test_connect_ev3(const uint8_t *addr, const char *pin);
+extern FILE*  ev3_spp_master_test_open_file();

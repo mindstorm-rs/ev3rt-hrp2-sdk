@@ -78,7 +78,7 @@ error_exit:
 	return ercd;
 }
 
-ER ev3_file_write(const char *path, char *data, size_t size) {
+ER ev3_file_write(const char *path, uint8_t *data, size_t size) {
 	ER ercd;
 
 	FILE      *fin;

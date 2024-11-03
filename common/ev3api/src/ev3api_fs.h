@@ -164,7 +164,7 @@ ER ev3_memfile_load(const char *path, memfile_t *p_memfile);
  * \retval E_PAR     The \a path does not point to a valid file.
  * \retval E_SYS     I/O failure, which might be caused by a corrupted SD card.
  */
-ER ev3_file_write(const char *path, char *data, size_t size);
+ER ev3_file_write(const char *path, uint8_t *data, size_t size);
 
 /**
  * \~English
