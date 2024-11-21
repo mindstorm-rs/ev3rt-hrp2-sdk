@@ -65,3 +65,6 @@ void __attribute__((weak)) _fini() {}
 void ev3_exit_task() { ext_tsk(); }
 ER ev3_get_utm(SYSUTM *p_sysutm) { return get_utm(p_sysutm); }
 extern ER ev3_sleep(int ms) { return tslp_tsk(ms); }
+
+void* ev3_malloc(size_t size) { return malloc(size); }
+void ev3_free(void* ptr) { free(ptr); }
