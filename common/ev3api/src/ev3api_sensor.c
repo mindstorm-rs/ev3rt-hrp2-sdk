@@ -655,7 +655,7 @@ bool_t nxt_ultrasonic_sensor_get_distance(sensor_port_t port, int16_t *distance)
 		*distance = previous_d;
 	}
 
-	if (did_reset || !is_different) {
+	if (did_reset || is_different) {
 		nxt_us_did_reset[port] = 0;
 		ercd = start_i2c_transaction(port, 0x1, "\x42", 1, 1);
 	} else {
