@@ -28,7 +28,7 @@ uint32_t *ev3_bluetooth_agent_values_read_ptr() {
     return &bluetooth_task_values_read;
 }
 uint32_t *ev3_bluetooth_agent_value_read_ptr() {
-    return &bluetooth_task_values_read;
+    return &bluetooth_task_value_read;
 }
 
 #define BT_DATA_BUFFER_SIZE 9
@@ -48,8 +48,10 @@ inline uint32_t decode_hex_digit(uint8_t c) {
 inline uint8_t encode_hex_digit(uint32_t c) {
     if (c < 10) {
         return '0' + c;
+    } else if (c < 16) {
+        return 'A' + (c - 10);
     } else {
-        return 'A' + c - 10;
+        return '0';
     }
 }
 
@@ -89,11 +91,11 @@ bool_t ev3_bt_write_value(uint32_t value) {
 
     char buf[BT_DATA_BUFFER_SIZE];
     for (int i = 0; i < 4; i++) {
-        uint32_t dh = (value >> 24) & 0xf;
-        uint32_t dl = (value >> 20) & 0xf;
-        value <<= 8;
+        uint32_t dh = (value >> 28) & 0xf;
+        uint32_t dl = (value >> 24) & 0xf;
         buf[i * 2] = encode_hex_digit(dh);
         buf[(i * 2) + 1] = encode_hex_digit(dl);
+        value <<= 8;
     }
     buf[BT_DATA_BUFFER_SIZE-1] = '\n';
 
