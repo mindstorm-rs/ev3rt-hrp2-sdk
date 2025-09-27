@@ -100,6 +100,8 @@ ER_UINT ev3_motor_get_type(motor_port_t port);
  */
 int32_t ev3_motor_get_counts(motor_port_t port);
 
+uint32_t ev3_motor_get_ticks(motor_port_t port);
+
 /**
  * \~English
  * \brief 	   Reset the angular position of the motor to zero

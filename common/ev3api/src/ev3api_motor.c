@@ -217,6 +217,22 @@ error_exit:
 	return 0;
 }
 
+uint32_t ev3_motor_get_ticks(motor_port_t port) {
+	// TODO: Should use ER & pointer instead ?
+	ER ercd;
+
+//	lazy_initialize();
+
+	CHECK_PORT(port);
+	CHECK_PORT_CONN(port);
+
+	return *pMotorData[port].tachoTicks;
+
+error_exit:
+	assert(ercd != E_OK);
+	syslog(LOG_ERROR, "%s(): Failed to get motor ticks, ercd: %d", __FUNCTION__, ercd);
+	return 0;
+}
 
 int ev3_motor_get_power(motor_port_t port) {
 	// TODO: Should use ER & pointer instead ?
